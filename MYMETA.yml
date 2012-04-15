@@ -1,5 +1,5 @@
 ---
-abstract: 'code filter for simple heredoc templates'
+abstract: 'heredoc templates'
 author:
   - 'Alexandr Gomoliako <zzz@zzz.org.ua>'
 build_requires:
@@ -20,4 +20,4 @@ no_index:
     - eg
 requires:
   Test::More: 0
-version: 0.1
+version: 0.2

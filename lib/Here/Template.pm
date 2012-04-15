@@ -2,21 +2,16 @@ package Here::Template;
 
 =head1 NAME
 
-Here::Template - code filter for simple heredoc templates
+Here::Template - heredoc templates
 
 =head1 SYNOPSIS
 
     use Here::Template;
     
-    print << 'TMPL';
+    print <<'TMPL';
     
         Hello, my pid is <?= $$ ?>
-    
-        Let's count to 10: <? 
-            for (1..10) { 
-                $here .= "$_ ";
-            }
-        ?>
+        Let's count to 10: <? for (1..10) { ?>$_ <? } ?>
     
     TMPL
 
@@ -24,19 +19,30 @@ Here::Template - code filter for simple heredoc templates
 
 Simple Filter::Util::Call based implementation of heredoc templates.
 
+To enable templates in some heredoc use quoted heredoc mark that contains
+B<TMPL>. Output is added to the buffer C<$here>. You can append data
+there as well:
+
+    print <<'TMPL';
+    
+        Hello, my pid is <?= $$ ?>
+        Let's count to 10: <? for (1..10) { $here.= "$_" } ?>
+    
+    TMPL
+
 =head1 EXPORT
 
 This module doesn't export anything by default.
 
 Special argument B<relaxed> can be used to disable strict and
-warnings inside the template's blocks, just in case. E.g.:
+warnings inside templates. E.g.:
 
     use strict;
     use warnings; 
     
     use Here::Template 'relaxed';
     
-    print << 'TMPL';
+    print <<'TMPL';
     
         Let's count to 10: <? 
             for $k (1..10) { 
@@ -48,7 +54,7 @@ warnings inside the template's blocks, just in case. E.g.:
 
 =cut
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 use strict;
 use warnings;
@@ -87,18 +93,6 @@ sub import {
             while (1) {
                 $st = filter_read();
 
-                if (/ $eof /gcx) {
-                    my $tmp  =  substr($_, 0, pos($_) - length($&));
-                       $_    =  substr($_, pos($_));
-                       $tmp  =~ s/$q/\\$q/g;
-                       $buf .=  $tmp;
-
-                    # '; $var }
-                    $buf .= "$q; $out }";
-                    $_    = $buf.$buf_end.$_;
-                    last;
-                }
-
                 if (/ $start (=)? /gcx) {
                     my $echo = $1;
 
@@ -117,6 +111,18 @@ sub import {
                     $buf .= "$q; ".
                              ($echo ? "$out.=$tmp" : "$tmp").
                              "; $out .=$q";
+                }
+
+                if (/ $eof /gcx) {
+                    my $tmp  =  substr($_, 0, pos($_) - length($&));
+                       $_    =  substr($_, pos($_));
+                       $tmp  =~ s/$q/\\$q/g;
+                       $buf .=  $tmp;
+
+                    # '; $var }
+                    $buf .= "$q; $out }";
+                    $_    = $buf.$buf_end.$_;
+                    last;
                 }
 
                 last 
@@ -138,7 +144,7 @@ Alexandr Gomoliako <zzz@zzz.org.ua>
 Copyright 2011-2012 Alexandr Gomoliako. All rights reserved.
 
 This module is free software. It may be used, redistributed and/or modified 
-under the same terms as B<nginx> itself.
+under the same terms as perl itself.
 
 =cut
 

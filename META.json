@@ -1,5 +1,5 @@
 {
-   "abstract" : "code filter for simple heredoc templates",
+   "abstract" : "heredoc templates",
    "author" : [
       "Alexandr Gomoliako <zzz@zzz.org.ua>"
    ],
@@ -38,5 +38,5 @@
       }
    },
    "release_status" : "stable",
-   "version" : "0.1"
+   "version" : "0.2"
 }

@@ -27,3 +27,15 @@ sub foo {
 print foo;
 print foo {foo => 'bar'};
 
+
+my $name = "foo";
+my @fruits = qw(apples oranges);
+
+print <<"TMPL";
+    
+    Hello, $name
+    <? for (@fruits) { ?>
+        Fruit: $_  <? } ?>
+
+TMPL
+
